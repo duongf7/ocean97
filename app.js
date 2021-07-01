@@ -1,4 +1,4 @@
-// import gsap from 'gsap'
+
 import * as THREE from './three.module.js'
 import vertexShader from './shader/vertex.glsl'
 import fragmentShader from './shader/fragment.glsl'
