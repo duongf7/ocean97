@@ -1,4 +1,5 @@
 import * as THREE from './three.module.js'
+
 const scene = new THREE.Scene();
 
 const canvasContainer = document.querySelector('#canvasContainer');
@@ -12,6 +13,7 @@ const renderer = new THREE.WebGLRenderer( {
 
 renderer.setSize( canvasContainer.offsetWidth, canvasContainer.offsetHeight );
 renderer.setPixelRatio( window.devicePixelRatio )
+
 
 const vertexShader = `
 varying vec2 vertexUV;
@@ -45,10 +47,12 @@ void main() {
 const atmosphereFragmentShader =`
 varying vec3 vertexNormal;
 void main() {
-    float intensity = pow(0.95 - dot(vertexNormal, vec3(0, 0, 1)), 2.0);
+    float intensity = pow(0.95 - dot(vertexNormal, vec3(0, 0, 1.0)), 2.0);
     gl_FragColor = vec4(0.3, 0.6, 1.0, 0.6) * intensity;
     }
 `;
+
+
 
 // create a sphere
 
