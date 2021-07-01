@@ -1,11 +1,4 @@
-
 import * as THREE from './three.module.js'
-import vertexShader from './shader/vertex.glsl'
-import fragmentShader from './shader/fragment.glsl'
-import atmosphereVertexShader from './shader/atmosphereVertex.glsl'
-import atmosphereFragmentShader from './shader/atmosphereFragment.glsl'
-console.log(fragmentShader);
-console.log(vertexShader);
 const scene = new THREE.Scene();
 
 const canvasContainer = document.querySelector('#canvasContainer');
@@ -20,6 +13,42 @@ const renderer = new THREE.WebGLRenderer( {
 renderer.setSize( canvasContainer.offsetWidth, canvasContainer.offsetHeight );
 renderer.setPixelRatio( window.devicePixelRatio )
 
+const vertexShader = `
+varying vec2 vertexUV;
+varying vec3 vertexNormal;
+void main() {
+    vertexNormal = normalize(normalMatrix * normal);
+    vertexUV = uv;
+    gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );
+    }
+`;
+
+const fragmentShader = `
+uniform sampler2D globeTexture;
+varying vec2 vertexUV;
+varying vec3 vertexNormal;
+void main() {
+    float intensity = 1.05 - dot(vertexNormal, vec3(0.0, 0.0, 1.0));
+    vec3 atmosphere = vec3(0.3, 0.6, 1.0) * pow(intensity, 1.5);
+    gl_FragColor = vec4(atmosphere + texture2D(globeTexture, vertexUV ).xyz, 1.0);
+    }
+`;
+
+const atmosphereVertexShader =`
+varying vec3 vertexNormal;
+void main() {
+    vertexNormal = normalize(normalMatrix * normal);
+    gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );
+    }
+`;
+
+const atmosphereFragmentShader =`
+varying vec3 vertexNormal;
+void main() {
+    float intensity = pow(0.95 - dot(vertexNormal, vec3(0, 0, 1)), 2.0);
+    gl_FragColor = vec4(0.3, 0.6, 1.0, 1.0) * intensity;
+    }
+`;
 
 // create a sphere
 
